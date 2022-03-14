@@ -1,8 +1,11 @@
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 
+from textwrap import indent
 import tkinter as tk
 from tkinter import messagebox
 import re
+import json
+import json
 
 from numpy import piecewise
 import password_generator
@@ -12,7 +15,7 @@ window.title("Password Manager")
 window.config(padx=20,pady=20)
 
 canvas = tk.Canvas(window, width=200, height=200,highlightthickness=0)
-photo = tk.PhotoImage(file="Tkinter password manager/logo.png")
+photo = tk.PhotoImage(file="logo.png")
 canvas.create_image(100, 100, image=photo)
 canvas.grid(row=0, column=1)
 
@@ -28,8 +31,8 @@ password_label.grid(row=3, column=0)
 
 
 
-website_entry=tk.Entry(width=39)
-website_entry.grid(row=1, column=1,columnspan=2)
+website_entry=tk.Entry(width=22)
+website_entry.grid(row=1, column=1,columnspan=1)
 
 email_username_entry=tk.Entry(width=39)
 email_username_entry.grid(row=2, column=1,columnspan=2)
@@ -52,19 +55,53 @@ def add():
             is_correct=messagebox.askokcancel("Password Manager", "Website: "+website+"\nEmail/Username: "+email_username+"\nPassword: "+password)
 
             if is_correct:
-                with open("Tkinter password manager/data.txt","a") as f:
-                    f.write(f"{website} | {email_username} | {password}\n")
-                website_entry.delete(0,tk.END)
-                email_username_entry.delete(0,tk.END)
-                password_entry.delete(0,tk.END)
+                new_data = {
+                    website: {
+                        "Email/Username": email_username,
+                        "Password": password
+                    }
+                }
+                try:
+                    with open("data.json","r") as f:
+                        data = json.load(f)
+                except FileNotFoundError:
+                    with open("data.json","w") as f:
+                        json.dump(new_data,f)
+
+                else:    
+                    data.update(new_data)
+                
+                    with open("data.json","w") as f2:
+                        json.dump(data,f2,indent=4)
+                finally:
+                    website_entry.delete(0,tk.END)
+                    email_username_entry.delete(0,tk.END)
+                    password_entry.delete(0,tk.END)
+                
 
 def get_password():
     password=password_generator.get_password()
     password_entry.delete(0,tk.END)
     password_entry.insert(0,password)
 
+def search():
+    website=website_entry.get()
+    try:
+        with open("data.json","r") as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        messagebox.showinfo("Error","No data found.")
+    else:
+        if website in data:
+            messagebox.showinfo("Password Manager", "Website: "+website+"\nEmail/Username: "+data[website]["Email/Username"]+"\nPassword: "+data[website]["Password"])
+        else:
+            messagebox.showinfo("Error","No data found.")
+
 generate_password_button = tk.Button(text="Generate Password",command=get_password)
 generate_password_button.grid(row=3, column=2)
+
+generate_password_button = tk.Button(text="          Search          ",command=search)
+generate_password_button.grid(row=1, column=2)
 
 add_button = tk.Button(text="Add",width=37,command=add)
 add_button.grid(row=4, column=1,columnspan=2)
