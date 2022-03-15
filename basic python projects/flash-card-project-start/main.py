@@ -1,5 +1,6 @@
 BACKGROUND_COLOR = "#B1DDC6"
 from email.mime import image
+from tkinter import font
 import pandas as pd
 import tkinter as tk
 import random
@@ -47,14 +48,14 @@ def change_card_correct():
         save_to_file(french, english)
         french, english = get_random_card(data)
         if len(french) > 0:
-            canvas.itemconfig(word_text, text=french)
-            canvas.itemconfig(lang_text, text="Fr")
+            canvas.itemconfig(word_text, text=french,fill="black")
+            canvas.itemconfig(lang_text, text="Fr",fill="black")
             canvas.itemconfig(canvas_image, image=front_card_photo)
             window.update()
 
             def change_back_card(english):
-                canvas.itemconfig(word_text, text=english)
-                canvas.itemconfig(lang_text, text="En")
+                canvas.itemconfig(word_text, text=english,fill="white")
+                canvas.itemconfig(lang_text, text="En",fill="white")
                 #change canvas image
                 canvas.itemconfig(canvas_image,image=back_card_photo)
                 window.update()
@@ -76,14 +77,14 @@ def change_card_false():
     if is_Continue:
         french, english = get_random_card(data)
         if len(french) > 0:
-            canvas.itemconfig(word_text, text=french)
-            canvas.itemconfig(lang_text, text="Fr")
+            canvas.itemconfig(word_text, text=french,fill="black")
+            canvas.itemconfig(lang_text, text="Fr",filll="black")
             canvas.itemconfig(canvas_image, image=front_card_photo)
             window.update()
 
             def change_back_card(english):
-                canvas.itemconfig(word_text, text=english)
-                canvas.itemconfig(lang_text, text="En")
+                canvas.itemconfig(word_text, text=english,fill="white")
+                canvas.itemconfig(lang_text, text="En",fill="white")
                 #change canvas image
                 canvas.itemconfig(canvas_image,image=back_card_photo)
                 window.update()
@@ -120,21 +121,17 @@ def get_random_card(data):
     except FileNotFoundError:
         with open("data/learned_words.csv", "w") as file:
             file.write("French,English\n")
-            print("filenotfound")
         return french, english
     else:
-        print(lines.count('\n'))
         if not (lines.count('\n') == 102):
             while french in lines:
                 index = random.randint(1, len(data) - 1)
                 french = data.iloc[index]["French"]
                 english = data.iloc[index]["English"]
-            print("correct")
             return french, english
         else:
             is_Continue = False
             save_to_file(french, english)
-            print("false")
             return '', ''
 
             
