@@ -31,12 +31,25 @@ headers = {
     "X-USER-TOKEN":TOKEN
 }
 send_params = {
-    "date":"20220328",
-    "quantity":"17.5"
+    "date":"20220327",
+    "quantity":"1.5"
 }
+put_params = {
+    "X-USER-TOKEN":TOKEN,
+    "quantity":"2.5"
+}
+delete_params = {
+    "X-USER-TOKEN":TOKEN,
+}
+date="20220328"
+
 send_endpoint = f"{graph_endpoint}/{graph_params['id']}"
+put_endpoint = f"{graph_endpoint}/{graph_params['id']}/{date}"
+delete_endpoint = f"{graph_endpoint}/{graph_params['id']}/{date}"
 print(send_endpoint)
-response=requests.post(url=send_endpoint, json=send_params, headers=headers)
+#response=requests.post(url=send_endpoint, json=send_params, headers=headers)
+#response=requests.put(url=put_endpoint, json=put_params, headers=headers)
+response=requests.delete(url=delete_endpoint, json=delete_params, headers=headers)
 print(response.text)
 
 
